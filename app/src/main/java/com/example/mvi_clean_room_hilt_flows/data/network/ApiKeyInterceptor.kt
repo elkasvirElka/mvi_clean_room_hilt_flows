@@ -1,5 +1,6 @@
 package com.example.mvi_clean_room_hilt_flows.data.network
 
+import com.example.mvi_clean_room_hilt_flows.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
 

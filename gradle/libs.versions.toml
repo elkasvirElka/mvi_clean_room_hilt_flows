@@ -2,7 +2,7 @@
 agp = "8.7.1"
 coreTesting = "2.1.0"
 fragmentKtx = "1.6.1"
-hiltAndroidCompiler = "2.40.5"
+hiltAndroidCompiler = "2.51.1"
 koinAndroidxViewmodel = "2.2.3"
 koinTest = "3.1.2"
 kotlin = "2.0.0"

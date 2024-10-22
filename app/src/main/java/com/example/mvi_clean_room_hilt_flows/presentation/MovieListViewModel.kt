@@ -4,12 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mvi_clean_room_hilt_flows.domain.MovieRepository
 import com.example.mvi_clean_room_hilt_flows.domain.entity.MovieInfo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MovieListViewModel(private val repository: MovieRepository) : ViewModel() {
+@HiltViewModel
+class MovieListViewModel @Inject constructor(private val repository: MovieRepository) : ViewModel() {
 
     private var _viewState = MutableStateFlow<MovieListState>(MovieListState.Loading)
 
