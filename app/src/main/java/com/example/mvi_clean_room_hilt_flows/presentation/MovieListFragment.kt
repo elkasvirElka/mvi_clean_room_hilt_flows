@@ -4,14 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.PagingDataAdapter
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.map
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
+import com.example.mvi_clean_room_hilt_flows.R
+import com.example.mvi_clean_room_hilt_flows.data.local.entity.MovieInfoEntity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -63,6 +72,20 @@ class MovieListFragment : Fragment() {
          }
     }
 
+    fun adapter() {
+//TODO implement this
+        val adapter = MoviePagingAdapter()
+
+        // Setup RecyclerView with the PagingDataAdapter
+        //recyclerView.adapter = adapter
+
+        // Observe the flow of paged data
+        lifecycleScope.launch {
+            viewModel.moviePagingFlow.collectLatest {
+                adapter.submitData(it.map { it.toMovieInfoEntity() })
+            }
+        }
+    }
     @Composable
     fun MovieListScreen(text: List<String> = listOf()) {
         // Placeholder for the actual screen content

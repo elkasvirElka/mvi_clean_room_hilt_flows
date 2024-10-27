@@ -106,7 +106,7 @@ dependencies {
     //implementation(libs.androidx.material)
 
     //Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.51.1")
+    implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
     // Room
@@ -115,6 +115,11 @@ dependencies {
 
     // Kotlin Extensions and Coroutines support for Room
     implementation(libs.androidx.room.ktx)
+
+    // Paging
+    implementation(libs.androidx.paging.runtime.ktx)
+    implementation("androidx.paging:paging-compose:1.0.0-alpha18")
+    implementation("androidx.room:room-paging:2.5.1")
 //implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
     //kapt("androidx.hilt:hilt-compiler:1.0.0")
     //implementation("androidx.hilt:hilt-navigation-compose:1.0.0")

@@ -1,13 +1,17 @@
 package com.example.mvi_clean_room_hilt_flows.di
 
 import android.app.Application
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import androidx.room.Room
 import com.example.mvi_clean_room_hilt_flows.data.local.MovieDatabase
+import com.example.mvi_clean_room_hilt_flows.data.local.entity.MovieInfoEntity
 import com.example.mvi_clean_room_hilt_flows.data.network.Retrofit
 import com.example.mvi_clean_room_hilt_flows.data.remote.ApiService
-import com.example.mvi_clean_room_hilt_flows.data.repository.MovieRepositoryImpl
+import com.example.mvi_clean_room_hilt_flows.data.remote.MovieRemoteMediator
+import com.example.mvi_clean_room_hilt_flows.data.remote.MovieRepositoryImpl
 import com.example.mvi_clean_room_hilt_flows.domain.MovieRepository
-import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,6 +37,22 @@ object AppModule {
         )
             //.addTypeConverter(Converters(GsonParser(Gson())))
             .build()
+    }
+
+    @OptIn(ExperimentalPagingApi::class)
+    @Provides
+    @Singleton
+    fun provideBeerPager(database: MovieDatabase,api: ApiService): Pager<Int, MovieInfoEntity> {
+        return Pager(
+            config = PagingConfig(pageSize = 20),
+            remoteMediator = MovieRemoteMediator(
+                database = database,
+                api = api
+            ),
+            pagingSourceFactory = {
+                database.dao.pagingSource()
+            }
+        )
     }
 
     @Provides
