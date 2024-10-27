@@ -1,8 +1,8 @@
 package com.example.mvi_clean_room_hilt_flows.domain
 
-import com.example.mvi_clean_room_hilt_flows.domain.entity.MovieResult
-import retrofit2.Response
+import com.example.mvi_clean_room_hilt_flows.domain.model.MovieInfo
+import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
-    suspend fun getMovies(): Response<MovieResult>
+    fun getMovies(loadType: LoadType): Flow<Resource<List<MovieInfo>>>
 }

@@ -2,20 +2,27 @@ package com.example.mvi_clean_room_hilt_flows.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mvi_clean_room_hilt_flows.domain.LoadType
 import com.example.mvi_clean_room_hilt_flows.domain.MovieRepository
-import com.example.mvi_clean_room_hilt_flows.domain.entity.MovieInfo
+import com.example.mvi_clean_room_hilt_flows.domain.Resource
+import com.example.mvi_clean_room_hilt_flows.domain.model.MovieInfo
+import com.example.mvi_clean_room_hilt_flows.domain.use_case.GetMovieInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MovieListViewModel @Inject constructor(private val repository: MovieRepository) : ViewModel() {
 
-    private var _viewState = MutableStateFlow<MovieListState>(MovieListState.Loading)
 
+    private var _viewState = MutableStateFlow<MovieListState>(MovieListState.Loading)
+    private val getMovieInfo = GetMovieInfo(repository, LoadType.Refresh)
     // Public immutable state flow for UI observation
     val viewState: StateFlow<MovieListState> = _viewState.asStateFlow()
 
@@ -25,23 +32,20 @@ class MovieListViewModel @Inject constructor(private val repository: MovieReposi
             is MovieListEvent.MovieDetails -> loadMovieDetails(event.movieId)
         }
     }
-
+    //TODO do we need to cancel the job when the viewmodel is cleared?
+    private var searchJob: Job? = null
     private fun loadMovies() {
         _viewState.value = MovieListState.Loading
-        viewModelScope.launch {
-            repository.getMovies().let { response ->
-                when(response.code()) {
-                    200 -> {
-                        _viewState.value = MovieListState.Loaded(response.body()?.results)
-                        //The ETag is server-managed, and if the server doesn't send a new ETag, the client will continue to use the same cached data.
-                        println("cache: eTag:".plus(response.headers()["ETag"]))
-                    }
 
-                    else -> {
-                        _viewState.value = MovieListState.Error("Error loading movies")
-                    }
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+          getMovieInfo().onEach { result ->
+                when(result){
+                    is Resource.Success -> _viewState.value = MovieListState.Loaded(result.data)
+                    is Resource.Error -> _viewState.value = MovieListState.Error(result.message ?: "An unexpected error occurred")
+                    is Resource.Loading -> _viewState.value = MovieListState.Loading
                 }
-            }
+            }.launchIn(this)
         }
     }
 

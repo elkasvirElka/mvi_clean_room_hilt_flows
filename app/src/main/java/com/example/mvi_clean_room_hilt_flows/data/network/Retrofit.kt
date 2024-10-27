@@ -11,6 +11,7 @@ class Retrofit {
         fun getRetrofit(): Retrofit {
             if (!Companion::sRetrofit.isInitialized) {
                 sRetrofit = Retrofit.Builder()
+                    .baseUrl("https://api.themoviedb.org/3/")
                     .client(provideClient())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()

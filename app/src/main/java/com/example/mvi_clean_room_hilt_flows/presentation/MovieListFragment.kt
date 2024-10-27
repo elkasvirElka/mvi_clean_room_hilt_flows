@@ -9,7 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MovieListFragment : Fragment() {
@@ -33,15 +36,18 @@ class MovieListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        /* viewLifecycleOwner.lifecycleScope.launch {
+         lifecycleScope.launch {
              viewModel.viewState.collect { state ->
                  when (state) {
                      is MovieListState.Loading -> {
                          // Show loading
                      }
                      is MovieListState.Loaded -> {
-                         val a = state.movies
-                         // Show movies
+                         state.movies?.forEach {
+                             println(it.title)
+                         }
+                         //MovieListScreen(state.movies)
+                     // Show movies
                      }
                      is MovieListState.Error -> {
                          // Show error
@@ -52,14 +58,14 @@ class MovieListFragment : Fragment() {
          lifecycleScope.launch {
              repeat(7) {
                  viewModel.onAction(MovieListEvent.LoadMovies)
-                 delay(10000L)
+                 delay(2000L)
              }
-         }*/
+         }
     }
 
     @Composable
-    fun MovieListScreen() {
+    fun MovieListScreen(text: List<String> = listOf()) {
         // Placeholder for the actual screen content
-        Text(text = "This is the Movie List Screen")
+        Text(text = text.joinToString { it + "\n" })
     }
 }

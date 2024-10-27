@@ -1,9 +1,7 @@
 package com.example.mvi_clean_room_hilt_flows
 
 import android.os.Bundle
-import android.text.TextUtils.replace
 import android.view.View
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
