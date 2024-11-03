@@ -5,6 +5,8 @@ import android.view.View
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -13,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
 import com.example.mvi_clean_room_hilt_flows.presentation.MovieListFragment
@@ -25,6 +28,44 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Initialize Executor
+        val executor = ContextCompat.getMainExecutor(this)
+
+        // Set up the BiometricPrompt
+        val biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
+            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                super.onAuthenticationSucceeded(result)
+                // Authentication successful
+                // Navigate to the next screen or perform necessary action
+            }
+
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                super.onAuthenticationError(errorCode, errString)
+                // Authentication error
+            }
+
+            override fun onAuthenticationFailed() {
+                super.onAuthenticationFailed()
+                // Authentication failed
+            }
+        })
+
+        // Build the prompt info
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Biometric Authentication")
+            .setSubtitle("Log in using Face ID or password")
+            .setNegativeButtonText("Use Password") // Password fallback button
+            .build()
+
+        // Check if biometric hardware is available and supported
+        if (BiometricManager.from(this).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
+            // Launch the biometric prompt
+            biometricPrompt.authenticate(promptInfo)
+        }else  {
+            // No biometrics enrolled - show password prompt
+           // showPasswordPrompt()
+        }
         setContent {
             Mvi_clean_room_hilt_flowsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
