@@ -1,5 +1,6 @@
 package com.example.mvi_clean_room_hilt_flows.presentation
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -44,13 +45,13 @@ class MovieListViewModel @Inject constructor(private val repository: MovieReposi
 
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-          getMovieInfo().onEach { result ->
+          getMovieInfo().collect { result ->
                 when(result){
                     is Resource.Success -> _viewState.value = MovieListState.Loaded(result.data)
                     is Resource.Error -> _viewState.value = MovieListState.Error(result.message ?: "An unexpected error occurred")
                     is Resource.Loading -> _viewState.value = MovieListState.Loading
                 }
-            }.launchIn(this)
+            }
         }
     }
 
@@ -83,3 +84,5 @@ sealed class MovieListState {
     data class Loaded(val movies: List<MovieInfo>?) : MovieListState()
     data class Error(val message: String) : MovieListState()
 }
+
+

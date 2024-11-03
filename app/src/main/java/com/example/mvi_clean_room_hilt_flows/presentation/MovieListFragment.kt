@@ -46,7 +46,7 @@ class MovieListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
          lifecycleScope.launch {
-             viewModel.viewState.collect { state ->
+             viewModel.viewState.collectLatest { state ->
                  when (state) {
                      is MovieListState.Loading -> {
                          // Show loading
@@ -81,6 +81,7 @@ class MovieListFragment : Fragment() {
 
         // Observe the flow of paged data
         lifecycleScope.launch {
+            //diff with collect is that collectLatest cancels block execution when a new emition is collected
             viewModel.moviePagingFlow.collectLatest {
                 adapter.submitData(it.map { it.toMovieInfoEntity() })
             }
