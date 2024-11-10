@@ -40,4 +40,5 @@ class MovieRepositoryImpl(
             emit(Resource.Error(message = "Couldn't reach server, check your internet connection.", data = moviesInfo))
         }
     }
+
 }
