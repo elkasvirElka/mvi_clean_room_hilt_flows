@@ -7,18 +7,32 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
-import com.example.mvi_clean_room_hilt_flows.presentation.MovieListFragment
+import com.example.mvi_clean_room_hilt_flows.presentation.composeExamples.TestFragment
 import com.example.mvi_clean_room_hilt_flows.ui.theme.Mvi_clean_room_hilt_flowsTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,27 +43,36 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+
+        biometricLogin()
+        setContent {
+            Mvi_clean_room_hilt_flowsTheme {
+            }
+        }
+    }
+
+    private fun biometricLogin() {
         // Initialize Executor
         val executor = ContextCompat.getMainExecutor(this)
-
         // Set up the BiometricPrompt
-        val biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
-            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                super.onAuthenticationSucceeded(result)
-                // Authentication successful
-                // Navigate to the next screen or perform necessary action
-            }
+        val biometricPrompt =
+            BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    // Authentication successful
+                    // Navigate to the next screen or perform necessary action
+                }
 
-            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                super.onAuthenticationError(errorCode, errString)
-                // Authentication error
-            }
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    // Authentication error
+                }
 
-            override fun onAuthenticationFailed() {
-                super.onAuthenticationFailed()
-                // Authentication failed
-            }
-        })
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+                    // Authentication failed
+                }
+            })
 
         // Build the prompt info
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
@@ -62,22 +85,9 @@ class MainActivity : AppCompatActivity() {
         if (BiometricManager.from(this).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
             // Launch the biometric prompt
             biometricPrompt.authenticate(promptInfo)
-        }else  {
+        } else {
             // No biometrics enrolled - show password prompt
-           // showPasswordPrompt()
-        }
-        setContent {
-            Mvi_clean_room_hilt_flowsTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-
-                    // Add Fragment Container in Compose Layout
-                    FragmentContainer()
-                }
-            }
+            // showPasswordPrompt()
         }
     }
 }
@@ -91,7 +101,7 @@ fun FragmentContainer() {
         }
 
         // Add the fragment to the container
-        val fragment = MovieListFragment()
+        val fragment = TestFragment() // MovieListFragment()
         (context as? AppCompatActivity)?.supportFragmentManager?.commit {
             replace(fragmentContainerView.id, fragment)
         }
@@ -115,3 +125,5 @@ fun GreetingPreview() {
         Greeting("Android")
     }
 }
+
+

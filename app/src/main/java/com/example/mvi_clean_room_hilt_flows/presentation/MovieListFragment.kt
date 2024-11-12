@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -91,5 +92,12 @@ class MovieListFragment : Fragment() {
     fun MovieListScreen(text: List<String> = listOf()) {
         // Placeholder for the actual screen content
         Text(text = text.joinToString { it + "\n" })
+    }
+
+    @Preview(showBackground = true)
+    @Composable
+    fun DefaultPreview() {
+        // A preview of the MovieListScreen composable
+        MovieListScreen(listOf("Movie 1", "Movie 2", "Movie 3"))
     }
 }
